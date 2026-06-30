@@ -4,11 +4,7 @@ const STORAGE_KEYS = {
   session: "shiireMemo.session",
 };
 
-const DEFAULT_MARKETS = [
-  { id: crypto.randomUUID(), name: "高麗堂", feeType: "rate", feeValue: 10 },
-  { id: crypto.randomUUID(), name: "中四国", feeType: "rate", feeValue: 10 },
-  { id: crypto.randomUUID(), name: "道具市場", feeType: "fixed", feeValue: 0 },
-];
+const DEFAULT_MARKETS = [];
 
 const state = {
   markets: loadMarkets(),
@@ -25,6 +21,8 @@ const elements = {
   setupForm: document.getElementById("setup-form"),
   sessionDate: document.getElementById("session-date"),
   marketSelect: document.getElementById("market-select"),
+  setupMarketHelp: document.getElementById("setup-market-help"),
+  startEntryButton: document.getElementById("start-entry-button"),
   openMarketSettings: document.getElementById("open-market-settings"),
   closeMarketSettings: document.getElementById("close-market-settings"),
   backToSetup: document.getElementById("back-to-setup"),
@@ -90,6 +88,11 @@ function routeToInitialScreen() {
 
 function handleSessionStart(event) {
   event.preventDefault();
+
+  if (!state.markets.length) {
+    showScreen("market");
+    return;
+  }
 
   state.session = {
     date: elements.sessionDate.value,
@@ -317,6 +320,8 @@ function renderHistory(logs) {
 
 function renderMarketOptions() {
   elements.marketSelect.innerHTML = "";
+  elements.setupMarketHelp.hidden = state.markets.length > 0;
+  elements.startEntryButton.disabled = state.markets.length === 0;
 
   state.markets.forEach((market) => {
     const option = document.createElement("option");
@@ -492,7 +497,7 @@ function loadMarkets() {
   }
 
   localStorage.setItem(STORAGE_KEYS.markets, JSON.stringify(DEFAULT_MARKETS));
-  return DEFAULT_MARKETS;
+  return [...DEFAULT_MARKETS];
 }
 
 function loadJson(key, fallback) {
