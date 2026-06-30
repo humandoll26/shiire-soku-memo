@@ -55,6 +55,17 @@ function init() {
   const today = todayString();
 
   if (state.session?.date && state.session.date !== today) {
+    const previousDate = state.session.date;
+    const previousLogs = state.logs.filter((log) => (
+      log.date === previousDate && log.marketId === state.session.marketId
+    ));
+
+    if (previousLogs.length) {
+      window.confirm(
+        `${previousDate} の入力が残っています。CSV保存はしましたか？`
+      );
+    }
+
     state.session = null;
     persistSession();
   }
