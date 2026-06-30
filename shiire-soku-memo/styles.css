@@ -1,0 +1,405 @@
+:root {
+  color-scheme: light;
+  --bg: #f5f1e8;
+  --panel: #fffdf8;
+  --line: #d7cdb8;
+  --text: #1d1a15;
+  --muted: #6a6254;
+  --accent: #1f6b4f;
+  --accent-strong: #15523c;
+  --danger: #a23d2f;
+  --shadow: 0 10px 24px rgba(76, 61, 33, 0.08);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+.screen {
+  display: none;
+}
+
+.screen-active {
+  display: block;
+}
+
+.screen-header {
+  padding: 12px 4px 16px;
+}
+
+.screen-header.compact {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.screen-header h1,
+.screen-header h2,
+.panel-heading h3 {
+  margin: 0;
+}
+
+.eyebrow,
+.session-label,
+.intro,
+.helper-text,
+.empty-state,
+.total-label,
+.total-subline,
+.field span {
+  color: var(--muted);
+}
+
+.eyebrow,
+.session-label {
+  font-size: 0.8rem;
+  margin: 0 0 4px;
+  letter-spacing: 0.06em;
+}
+
+.intro,
+.helper-text,
+.empty-state,
+.error-text {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+}
+
+.panel,
+.total-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 14px;
+  font-size: 16px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid rgba(31, 107, 79, 0.25);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.primary-button,
+.secondary-button,
+.text-button,
+.delete-button {
+  border: 0;
+  border-radius: 14px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.secondary-button {
+  background: #ece3d1;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.text-button {
+  background: transparent;
+  color: var(--accent-strong);
+  padding: 0 4px;
+  min-height: auto;
+}
+
+.small-button {
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.total-card {
+  position: sticky;
+  top: 12px;
+  z-index: 1;
+  margin-bottom: 16px;
+  padding: 18px;
+}
+
+.total-value {
+  margin: 8px 0 10px;
+  font-size: clamp(2.2rem, 8vw, 3.6rem);
+  line-height: 1;
+  font-weight: 800;
+}
+
+.total-subline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.history-table-head,
+.history-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) 92px minmax(0, 1.2fr) 56px 64px;
+  gap: 8px;
+  align-items: center;
+}
+
+.history-table-head {
+  padding: 0 8px 6px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.history-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+}
+
+.history-cell {
+  min-width: 0;
+}
+
+.history-main {
+  min-width: 0;
+}
+
+.history-item-name,
+.history-amount {
+  font-weight: 700;
+}
+
+.history-title,
+.history-meta {
+  margin: 0;
+}
+
+.history-title {
+  font-weight: 700;
+}
+
+.history-item-name,
+.history-note,
+.history-time {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.history-note,
+.history-time {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.history-meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.history-amount {
+  text-align: right;
+  margin: 0;
+}
+
+.delete-button {
+  min-width: 64px;
+  min-height: 34px;
+  background: #f6ddd8;
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.entry-form {
+  scroll-margin-bottom: 96px;
+}
+
+.error-text {
+  color: var(--danger);
+  min-height: 1.25em;
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 10px 10px calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .button-row,
+  .total-subline,
+  .panel-heading {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .panel-heading {
+    align-items: stretch;
+  }
+
+  .screen-header {
+    padding: 8px 2px 10px;
+  }
+
+  .panel {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .stack {
+    gap: 10px;
+  }
+
+  .field {
+    gap: 6px;
+  }
+
+  .field span {
+    font-size: 0.84rem;
+  }
+
+  .field input,
+  .field select {
+    min-height: 46px;
+    padding: 0 12px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    min-height: 42px;
+  }
+
+  .small-button {
+    min-height: 34px;
+  }
+
+  .total-card {
+    top: 8px;
+    margin-bottom: 10px;
+    padding: 14px;
+  }
+
+  .total-value {
+    margin: 6px 0 8px;
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+  }
+
+  .total-subline {
+    font-size: 0.82rem;
+  }
+
+  .history-table-head {
+    grid-template-columns: minmax(0, 1.6fr) 76px minmax(0, 1fr) 48px 56px;
+    gap: 6px;
+    font-size: 0.68rem;
+  }
+
+  .history-item {
+    padding: 7px;
+  }
+
+  .history-row {
+    grid-template-columns: minmax(0, 1.6fr) 76px minmax(0, 1fr) 48px 56px;
+    gap: 6px;
+  }
+
+  .action-row {
+    justify-content: stretch;
+  }
+
+  .history-item-name,
+  .history-amount,
+  .history-note,
+  .history-time {
+    font-size: 0.8rem;
+  }
+
+  .delete-button {
+    min-width: 56px;
+    min-height: 32px;
+    font-size: 0.75rem;
+  }
+}

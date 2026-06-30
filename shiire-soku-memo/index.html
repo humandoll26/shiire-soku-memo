@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>仕入れ即メモ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="screen screen-active" id="setup-screen" aria-labelledby="setup-title">
+      <header class="screen-header">
+        <p class="eyebrow">MVP</p>
+        <h1 id="setup-title">仕入れ即メモ</h1>
+        <p class="intro">日付と市場を選んで、すぐ入力を始められます。</p>
+      </header>
+
+      <form id="setup-form" class="panel stack">
+        <label class="field">
+          <span>日付</span>
+          <input type="date" id="session-date" required>
+        </label>
+
+        <label class="field">
+          <span>市場</span>
+          <select id="market-select" required></select>
+        </label>
+
+        <div class="button-row">
+          <button type="button" class="secondary-button" id="open-market-settings">市場設定</button>
+          <button type="submit" class="primary-button">入力へ進む</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen" id="entry-screen" aria-label="入力画面">
+      <header class="screen-header compact">
+        <button type="button" class="text-button" id="back-to-setup">← 戻る</button>
+        <div>
+          <p class="session-label" id="session-summary"></p>
+        </div>
+      </header>
+
+      <section class="total-card" aria-live="polite">
+        <p class="total-label">手数料込み合計</p>
+        <p class="total-value" id="grand-total">¥0</p>
+        <div class="total-subline">
+          <span>商品合計 <strong id="subtotal">¥0</strong></span>
+          <span>手数料 <strong id="fee-total">¥0</strong></span>
+        </div>
+      </section>
+
+      <form id="entry-form" class="panel stack entry-form" novalidate>
+        <label class="field">
+          <span>入力欄</span>
+          <input
+            type="text"
+            id="quick-input"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="done"
+            placeholder="例: 小皿 500"
+          >
+        </label>
+
+        <label class="field">
+          <span>補足メモ（任意）</span>
+          <input
+            type="text"
+            id="note-input"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="done"
+            placeholder="必要ならメモ"
+          >
+        </label>
+
+        <button type="submit" class="primary-button">追加する</button>
+        <p class="helper-text">末尾の数字を金額として読み取ります。</p>
+        <p class="error-text" id="entry-error" role="alert"></p>
+      </form>
+
+      <section class="panel history-panel">
+        <div class="panel-heading">
+          <h3>入力履歴</h3>
+          <div class="action-row">
+            <button type="button" class="secondary-button small-button" id="export-csv">CSV保存</button>
+            <button type="button" class="secondary-button small-button" id="clear-day-entries">この日を全削除</button>
+          </div>
+        </div>
+        <div class="history-table-head" aria-hidden="true">
+          <span>品目</span>
+          <span>金額</span>
+          <span>メモ</span>
+          <span>時刻</span>
+          <span>操作</span>
+        </div>
+        <ul class="history-list" id="history-list"></ul>
+        <p class="empty-state" id="history-empty">まだ入力はありません。</p>
+      </section>
+    </section>
+
+    <section class="screen" id="market-screen" aria-labelledby="market-title">
+      <header class="screen-header compact">
+        <button type="button" class="text-button" id="close-market-settings">← 戻る</button>
+        <div>
+          <p class="session-label">設定</p>
+          <h2 id="market-title">市場設定</h2>
+        </div>
+      </header>
+
+      <form id="market-form" class="panel stack">
+        <label class="field">
+          <span>市場名</span>
+          <input type="text" id="market-name" placeholder="例: 高麗堂" required>
+        </label>
+
+        <label class="field">
+          <span>手数料タイプ</span>
+          <select id="market-fee-type">
+            <option value="rate">率 (%)</option>
+            <option value="fixed">固定額 (円)</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>手数料値</span>
+          <input type="number" id="market-fee-value" min="0" step="0.1" placeholder="例: 10">
+        </label>
+
+        <button type="submit" class="primary-button">市場を追加</button>
+        <p class="helper-text">同名市場は追加できません。</p>
+      </form>
+
+      <section class="panel history-panel">
+        <div class="panel-heading">
+          <h3>登録済み市場</h3>
+        </div>
+        <ul class="history-list" id="market-list"></ul>
+        <p class="empty-state" id="market-empty">市場がまだ登録されていません。</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
