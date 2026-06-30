@@ -24,6 +24,10 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -338,6 +342,46 @@ select {
   min-height: 1.25em;
 }
 
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(29, 26, 21, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-card {
+  width: min(100%, 420px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 16px 36px rgba(29, 26, 21, 0.22);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.modal-card h2,
+.modal-text {
+  margin: 0;
+}
+
+.modal-text {
+  color: var(--muted);
+}
+
+.modal-actions {
+  display: grid;
+  gap: 10px;
+}
+
 @media (max-width: 480px) {
   .app-shell {
     padding: 10px 10px calc(84px + env(safe-area-inset-bottom));
@@ -485,5 +529,16 @@ select {
     bottom: calc(6px + env(safe-area-inset-bottom));
     z-index: 2;
     box-shadow: 0 14px 28px rgba(76, 61, 33, 0.18);
+  }
+
+  .modal-backdrop {
+    padding: 14px;
+    align-items: end;
+  }
+
+  .modal-card {
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px 18px 0 0;
   }
 }

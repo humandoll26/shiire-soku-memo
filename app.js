@@ -41,6 +41,10 @@ const elements = {
   finishSession: document.getElementById("finish-session"),
   exportCsv: document.getElementById("export-csv"),
   clearDayEntries: document.getElementById("clear-day-entries"),
+  finishModal: document.getElementById("finish-modal"),
+  cancelFinish: document.getElementById("cancel-finish"),
+  finishWithoutExport: document.getElementById("finish-without-export"),
+  finishWithExport: document.getElementById("finish-with-export"),
   marketForm: document.getElementById("market-form"),
   marketName: document.getElementById("market-name"),
   marketFeeType: document.getElementById("market-fee-type"),
@@ -86,6 +90,14 @@ function bindEvents() {
   elements.finishSession.addEventListener("click", handleFinishSession);
   elements.exportCsv.addEventListener("click", handleExportCsv);
   elements.clearDayEntries.addEventListener("click", handleClearDayEntries);
+  elements.cancelFinish.addEventListener("click", closeFinishModal);
+  elements.finishWithoutExport.addEventListener("click", () => completeSession(false));
+  elements.finishWithExport.addEventListener("click", () => completeSession(true));
+  elements.finishModal.addEventListener("click", (event) => {
+    if (event.target === elements.finishModal) {
+      closeFinishModal();
+    }
+  });
   elements.marketForm.addEventListener("submit", handleMarketSubmit);
 
   document.addEventListener("focusin", handleFocusChange);
@@ -203,11 +215,15 @@ function handleClearDayEntries() {
 }
 
 function handleExportCsv() {
+  exportCurrentCsv();
+}
+
+function exportCurrentCsv() {
   const market = getSelectedMarket();
   const logs = getCurrentLogs();
 
   if (!market || !logs.length) {
-    return;
+    return false;
   }
 
   const rows = [
@@ -234,6 +250,7 @@ function handleExportCsv() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  return true;
 }
 
 function handleFinishSession() {
@@ -244,20 +261,11 @@ function handleFinishSession() {
 
   const logs = getCurrentLogs();
   if (logs.length) {
-    const shouldFinish = window.confirm(
-      `${state.session.date} の入力を終了します。CSV保存はしましたか？`
-    );
-
-    if (!shouldFinish) {
-      return;
-    }
+    openFinishModal();
+    return;
   }
 
-  state.session = null;
-  persistSession();
-  elements.sessionDate.value = todayString();
-  renderMarketOptions();
-  showScreen("setup");
+  completeSession(false);
 }
 
 function handleMarketSubmit(event) {
@@ -437,6 +445,29 @@ function showScreen(name) {
   Object.entries(elements.screens).forEach(([screenName, screen]) => {
     screen.classList.toggle("screen-active", screenName === name);
   });
+}
+
+function openFinishModal() {
+  elements.finishModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeFinishModal() {
+  elements.finishModal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
+function completeSession(shouldExport) {
+  if (shouldExport) {
+    exportCurrentCsv();
+  }
+
+  closeFinishModal();
+  state.session = null;
+  persistSession();
+  elements.sessionDate.value = todayString();
+  renderMarketOptions();
+  showScreen("setup");
 }
 
 function handleFocusChange() {
