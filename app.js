@@ -165,6 +165,14 @@ function handleClearDayEntries() {
     return;
   }
 
+  const shouldDelete = window.confirm(
+    `${state.session.date} の ${targetLogs.length} 件を削除します。よろしいですか？`
+  );
+
+  if (!shouldDelete) {
+    return;
+  }
+
   const targetIds = new Set(targetLogs.map((log) => log.id));
   state.logs = state.logs.filter((log) => !targetIds.has(log.id));
   persistLogs();
