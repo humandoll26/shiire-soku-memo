@@ -382,6 +382,12 @@ select {
     padding: 0 12px;
   }
 
+  #session-date {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 15px;
+  }
+
   .primary-button,
   .secondary-button {
     min-height: 40px;
