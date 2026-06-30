@@ -38,6 +38,7 @@ const elements = {
   entryError: document.getElementById("entry-error"),
   historyList: document.getElementById("history-list"),
   historyEmpty: document.getElementById("history-empty"),
+  finishSession: document.getElementById("finish-session"),
   exportCsv: document.getElementById("export-csv"),
   clearDayEntries: document.getElementById("clear-day-entries"),
   marketForm: document.getElementById("market-form"),
@@ -51,7 +52,14 @@ const elements = {
 init();
 
 function init() {
-  elements.sessionDate.value = state.session?.date || todayString();
+  const today = todayString();
+
+  if (state.session?.date && state.session.date !== today) {
+    state.session = null;
+    persistSession();
+  }
+
+  elements.sessionDate.value = state.session?.date || today;
   renderMarketOptions();
   bindEvents();
   routeToInitialScreen();
@@ -64,6 +72,7 @@ function bindEvents() {
   elements.backToSetup.addEventListener("click", () => showScreen("setup"));
   elements.entryForm.addEventListener("submit", handleEntrySubmit);
   elements.toggleNote.addEventListener("click", handleToggleNote);
+  elements.finishSession.addEventListener("click", handleFinishSession);
   elements.exportCsv.addEventListener("click", handleExportCsv);
   elements.clearDayEntries.addEventListener("click", handleClearDayEntries);
   elements.marketForm.addEventListener("submit", handleMarketSubmit);
@@ -214,6 +223,30 @@ function handleExportCsv() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+function handleFinishSession() {
+  if (!state.session) {
+    showScreen("setup");
+    return;
+  }
+
+  const logs = getCurrentLogs();
+  if (logs.length) {
+    const shouldFinish = window.confirm(
+      `${state.session.date} の入力を終了します。CSV保存はしましたか？`
+    );
+
+    if (!shouldFinish) {
+      return;
+    }
+  }
+
+  state.session = null;
+  persistSession();
+  elements.sessionDate.value = todayString();
+  renderMarketOptions();
+  showScreen("setup");
 }
 
 function handleMarketSubmit(event) {
