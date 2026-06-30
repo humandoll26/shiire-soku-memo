@@ -255,6 +255,57 @@ select {
   gap: 6px;
 }
 
+.archive-list {
+  display: grid;
+  gap: 14px;
+}
+
+.archive-day {
+  display: grid;
+  gap: 10px;
+}
+
+.archive-day-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.archive-session {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 12px;
+}
+
+.archive-session-main {
+  display: grid;
+  gap: 4px;
+}
+
+.archive-session-title,
+.archive-session-meta,
+.archive-session-submeta {
+  margin: 0;
+}
+
+.archive-session-title {
+  font-weight: 700;
+}
+
+.archive-session-meta,
+.archive-session-submeta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.archive-session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .history-table-head,
 .history-row {
   display: grid;
@@ -491,6 +542,15 @@ select {
 
   .action-row {
     justify-content: stretch;
+  }
+
+  .archive-session {
+    padding: 10px;
+  }
+
+  .archive-session-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .history-item-name,

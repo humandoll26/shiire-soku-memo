@@ -17,6 +17,7 @@ const elements = {
     setup: document.getElementById("setup-screen"),
     entry: document.getElementById("entry-screen"),
     market: document.getElementById("market-screen"),
+    history: document.getElementById("history-screen"),
   },
   setupForm: document.getElementById("setup-form"),
   sessionDate: document.getElementById("session-date"),
@@ -24,7 +25,9 @@ const elements = {
   setupMarketHelp: document.getElementById("setup-market-help"),
   startEntryButton: document.getElementById("start-entry-button"),
   openMarketSettings: document.getElementById("open-market-settings"),
+  openHistoryScreen: document.getElementById("open-history-screen"),
   closeMarketSettings: document.getElementById("close-market-settings"),
+  closeHistoryScreen: document.getElementById("close-history-screen"),
   backToSetup: document.getElementById("back-to-setup"),
   sessionSummary: document.getElementById("session-summary"),
   grandTotal: document.getElementById("grand-total"),
@@ -51,6 +54,8 @@ const elements = {
   marketFeeValue: document.getElementById("market-fee-value"),
   marketList: document.getElementById("market-list"),
   marketEmpty: document.getElementById("market-empty"),
+  archiveList: document.getElementById("archive-list"),
+  archiveEmpty: document.getElementById("archive-empty"),
 };
 
 init();
@@ -83,7 +88,9 @@ function init() {
 function bindEvents() {
   elements.setupForm.addEventListener("submit", handleSessionStart);
   elements.openMarketSettings.addEventListener("click", () => showScreen("market"));
+  elements.openHistoryScreen.addEventListener("click", handleOpenHistoryScreen);
   elements.closeMarketSettings.addEventListener("click", () => showScreen("setup"));
+  elements.closeHistoryScreen.addEventListener("click", () => showScreen("setup"));
   elements.backToSetup.addEventListener("click", () => showScreen("setup"));
   elements.entryForm.addEventListener("submit", handleEntrySubmit);
   elements.toggleNote.addEventListener("click", handleToggleNote);
@@ -226,11 +233,23 @@ function exportCurrentCsv() {
     return false;
   }
 
+  return exportLogsAsCsv({
+    logs,
+    date: state.session.date,
+    marketName: market.name,
+  });
+}
+
+function exportLogsAsCsv({ logs, date, marketName }) {
+  if (!logs.length) {
+    return false;
+  }
+
   const rows = [
     ["date", "market", "item_name", "amount", "note", "created_at"],
     ...logs.map((log) => [
       log.date,
-      market.name,
+      marketName,
       log.itemName,
       String(log.amount),
       log.note || "",
@@ -242,10 +261,10 @@ function exportCurrentCsv() {
   const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const safeMarketName = market.name.replace(/[\\/:*?"<>|]/g, "_");
+  const safeMarketName = marketName.replace(/[\\/:*?"<>|]/g, "_");
 
   link.href = url;
-  link.download = `shiire-log-${state.session.date}-${safeMarketName}.csv`;
+  link.download = `shiire-log-${date}-${safeMarketName}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -266,6 +285,11 @@ function handleFinishSession() {
   }
 
   completeSession(false);
+}
+
+function handleOpenHistoryScreen() {
+  renderArchiveHistory();
+  showScreen("history");
 }
 
 function handleMarketSubmit(event) {
@@ -428,6 +452,89 @@ function renderMarketList() {
   });
 }
 
+function renderArchiveHistory() {
+  elements.archiveList.innerHTML = "";
+
+  const sessionsByDate = getArchiveSessionsByDate();
+  elements.archiveEmpty.hidden = sessionsByDate.length > 0;
+
+  sessionsByDate.forEach(({ date, sessions }) => {
+    const daySection = document.createElement("section");
+    daySection.className = "archive-day";
+
+    const dayTitle = document.createElement("h3");
+    dayTitle.className = "archive-day-title";
+    dayTitle.textContent = date;
+    daySection.appendChild(dayTitle);
+
+    sessions.forEach((session) => {
+      const card = document.createElement("article");
+      card.className = "archive-session";
+
+      const main = document.createElement("div");
+      main.className = "archive-session-main";
+
+      const title = document.createElement("p");
+      title.className = "archive-session-title";
+      title.textContent = session.marketName;
+
+      const meta = document.createElement("p");
+      meta.className = "archive-session-meta";
+      meta.textContent = `合計 ${formatYen(session.total)} / ${session.count}件`;
+
+      const submeta = document.createElement("p");
+      submeta.className = "archive-session-submeta";
+      submeta.textContent = `手数料込み ${formatYen(session.totalWithFee)}`;
+
+      main.append(title, meta, submeta);
+
+      const actions = document.createElement("div");
+      actions.className = "archive-session-actions";
+
+      const exportButton = document.createElement("button");
+      exportButton.type = "button";
+      exportButton.className = "secondary-button small-button";
+      exportButton.textContent = "CSV出力";
+      exportButton.addEventListener("click", () => {
+        exportLogsAsCsv({
+          logs: session.logs,
+          date,
+          marketName: session.marketName,
+        });
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "secondary-button small-button";
+      deleteButton.textContent = "削除";
+      deleteButton.addEventListener("click", () => {
+        const shouldDelete = window.confirm(
+          `${date} / ${session.marketName} の ${session.count} 件を削除します。よろしいですか？`
+        );
+
+        if (!shouldDelete) {
+          return;
+        }
+
+        const targetIds = new Set(session.logs.map((log) => log.id));
+        state.logs = state.logs.filter((log) => !targetIds.has(log.id));
+        persistLogs();
+        renderArchiveHistory();
+
+        if (state.session?.date === date && state.session?.marketId === session.marketId) {
+          renderSession();
+        }
+      });
+
+      actions.append(exportButton, deleteButton);
+      card.append(main, actions);
+      daySection.appendChild(card);
+    });
+
+    elements.archiveList.appendChild(daySection);
+  });
+}
+
 function removeMarket(marketId) {
   state.markets = state.markets.filter((market) => market.id !== marketId);
 
@@ -501,6 +608,61 @@ function getCurrentLogs() {
   return state.logs.filter((log) => (
     log.date === state.session.date && log.marketId === state.session.marketId
   ));
+}
+
+function getArchiveSessionsByDate() {
+  const marketMap = new Map(state.markets.map((market) => [market.id, market]));
+  const sessionMap = new Map();
+
+  state.logs.forEach((log) => {
+    const key = `${log.date}__${log.marketId}`;
+    if (!sessionMap.has(key)) {
+      const market = marketMap.get(log.marketId);
+      sessionMap.set(key, {
+        date: log.date,
+        marketId: log.marketId,
+        marketName: market?.name || "未設定市場",
+        logs: [],
+        total: 0,
+        totalWithFee: 0,
+        count: 0,
+      });
+    }
+
+    const session = sessionMap.get(key);
+    session.logs.push(log);
+    session.total += log.amount;
+    session.count += 1;
+  });
+
+  const sessions = Array.from(sessionMap.values()).map((session) => {
+    const market = marketMap.get(session.marketId);
+    const fee = market ? calculateFee(session.total, market) : 0;
+    return {
+      ...session,
+      totalWithFee: session.total + fee,
+    };
+  });
+
+  const byDate = new Map();
+  sessions
+    .sort((a, b) => {
+      if (a.date === b.date) {
+        return b.logs[0].createdAt.localeCompare(a.logs[0].createdAt);
+      }
+      return b.date.localeCompare(a.date);
+    })
+    .forEach((session) => {
+      if (!byDate.has(session.date)) {
+        byDate.set(session.date, []);
+      }
+      byDate.get(session.date).push(session);
+    });
+
+  return Array.from(byDate.entries()).map(([date, groupedSessions]) => ({
+    date,
+    sessions: groupedSessions,
+  }));
 }
 
 function getSelectedMarket() {

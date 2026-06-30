@@ -41,6 +41,7 @@
           <button type="button" class="secondary-button" id="open-market-settings">市場設定</button>
           <button type="submit" class="primary-button" id="start-entry-button">入力へ進む</button>
         </div>
+        <button type="button" class="secondary-button" id="open-history-screen">履歴一覧</button>
       </form>
     </section>
 
@@ -165,6 +166,24 @@
         </div>
         <ul class="history-list" id="market-list"></ul>
         <p class="empty-state" id="market-empty">市場がまだ登録されていません。</p>
+      </section>
+    </section>
+
+    <section class="screen" id="history-screen" aria-labelledby="history-title">
+      <header class="screen-header compact">
+        <button type="button" class="text-button" id="close-history-screen">← 戻る</button>
+        <div>
+          <p class="session-label">履歴</p>
+          <h2 id="history-title">日付別履歴</h2>
+        </div>
+      </header>
+
+      <section class="panel history-archive-panel">
+        <div class="panel-heading">
+          <h3>保存済みデータ</h3>
+        </div>
+        <div class="archive-list" id="archive-list"></div>
+        <p class="empty-state" id="archive-empty">保存済みの履歴はまだありません。</p>
       </section>
     </section>
   </main>
