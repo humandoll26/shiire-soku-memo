@@ -35,6 +35,8 @@ const elements = {
   entryForm: document.getElementById("entry-form"),
   quickInput: document.getElementById("quick-input"),
   noteInput: document.getElementById("note-input"),
+  toggleNote: document.getElementById("toggle-note"),
+  noteFieldWrapper: document.getElementById("note-field-wrapper"),
   entryError: document.getElementById("entry-error"),
   historyList: document.getElementById("history-list"),
   historyEmpty: document.getElementById("history-empty"),
@@ -63,9 +65,17 @@ function bindEvents() {
   elements.closeMarketSettings.addEventListener("click", () => showScreen("setup"));
   elements.backToSetup.addEventListener("click", () => showScreen("setup"));
   elements.entryForm.addEventListener("submit", handleEntrySubmit);
+  elements.toggleNote.addEventListener("click", handleToggleNote);
   elements.exportCsv.addEventListener("click", handleExportCsv);
   elements.clearDayEntries.addEventListener("click", handleClearDayEntries);
   elements.marketForm.addEventListener("submit", handleMarketSubmit);
+
+  document.addEventListener("focusin", handleFocusChange);
+  document.addEventListener("focusout", handleFocusChange);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", handleViewportResize);
+  }
 }
 
 function routeToInitialScreen() {
@@ -126,7 +136,23 @@ function handleEntrySubmit(event) {
 
   elements.quickInput.value = "";
   elements.noteInput.value = "";
+  if (elements.noteFieldWrapper.hidden === false) {
+    elements.noteFieldWrapper.hidden = true;
+    elements.toggleNote.textContent = "補足メモを開く";
+  }
   elements.quickInput.focus();
+}
+
+function handleToggleNote() {
+  const willOpen = elements.noteFieldWrapper.hidden;
+  elements.noteFieldWrapper.hidden = !willOpen;
+  elements.toggleNote.textContent = willOpen ? "補足メモを閉じる" : "補足メモを開く";
+
+  if (willOpen) {
+    elements.noteInput.focus();
+  } else {
+    elements.quickInput.focus();
+  }
 }
 
 function handleClearDayEntries() {
@@ -354,6 +380,29 @@ function showScreen(name) {
   Object.entries(elements.screens).forEach(([screenName, screen]) => {
     screen.classList.toggle("screen-active", screenName === name);
   });
+}
+
+function handleFocusChange() {
+  window.setTimeout(() => {
+    const active = document.activeElement;
+    const isEntryField = active === elements.quickInput || active === elements.noteInput;
+    document.body.classList.toggle("keyboard-open", isEntryField);
+
+    if (isEntryField) {
+      active.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, 50);
+}
+
+function handleViewportResize() {
+  const active = document.activeElement;
+  const isEntryField = active === elements.quickInput || active === elements.noteInput;
+
+  if (!isEntryField) {
+    return;
+  }
+
+  document.body.classList.add("keyboard-open");
 }
 
 function getCurrentLogs() {

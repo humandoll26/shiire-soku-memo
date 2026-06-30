@@ -91,6 +91,40 @@ select {
   gap: 14px;
 }
 
+.entry-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.helper-text-compact {
+  flex: 1;
+}
+
+.note-toggle {
+  white-space: nowrap;
+}
+
+.entry-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px;
+  gap: 10px;
+  align-items: end;
+}
+
+.quick-field {
+  min-width: 0;
+}
+
+.entry-submit {
+  min-height: 52px;
+}
+
+.note-field-wrapper[hidden] {
+  display: none;
+}
+
 .panel,
 .total-card {
   background: var(--panel);
@@ -311,7 +345,8 @@ select {
 
   .button-row,
   .total-subline,
-  .panel-heading {
+  .panel-heading,
+  .entry-row {
     grid-template-columns: 1fr;
     display: grid;
   }
@@ -343,13 +378,13 @@ select {
 
   .field input,
   .field select {
-    min-height: 46px;
+    min-height: 44px;
     padding: 0 12px;
   }
 
   .primary-button,
   .secondary-button {
-    min-height: 42px;
+    min-height: 40px;
   }
 
   .small-button {
@@ -369,6 +404,24 @@ select {
 
   .total-subline {
     font-size: 0.82rem;
+  }
+
+  .entry-toolbar {
+    gap: 6px;
+    align-items: center;
+  }
+
+  .note-toggle {
+    justify-self: end;
+    font-size: 0.82rem;
+  }
+
+  .entry-row {
+    gap: 8px;
+  }
+
+  .entry-submit {
+    min-height: 42px;
   }
 
   .history-table-head {
@@ -401,5 +454,30 @@ select {
     min-width: 56px;
     min-height: 32px;
     font-size: 0.75rem;
+  }
+
+  body.keyboard-open .total-card {
+    padding: 10px 12px;
+  }
+
+  body.keyboard-open .total-value {
+    margin: 4px 0 6px;
+    font-size: 2.1rem;
+  }
+
+  body.keyboard-open .total-subline {
+    display: grid;
+    gap: 4px;
+  }
+
+  body.keyboard-open .history-panel {
+    opacity: 0.45;
+  }
+
+  body.keyboard-open .entry-form {
+    position: sticky;
+    bottom: calc(6px + env(safe-area-inset-bottom));
+    z-index: 2;
+    box-shadow: 0 14px 28px rgba(76, 61, 33, 0.18);
   }
 }

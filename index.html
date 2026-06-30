@@ -51,38 +51,47 @@
       </section>
 
       <form id="entry-form" class="panel stack entry-form" novalidate>
-        <label class="field">
-          <span>入力欄</span>
-          <input
-            type="text"
-            id="quick-input"
-            inputmode="text"
-            autocomplete="off"
-            autocapitalize="off"
-            autocorrect="off"
-            spellcheck="false"
-            enterkeyhint="done"
-            placeholder="例: 小皿 500"
-          >
-        </label>
+        <div class="entry-toolbar">
+          <p class="helper-text helper-text-compact">末尾の数字を金額として読み取ります。</p>
+          <button type="button" class="text-button note-toggle" id="toggle-note">補足メモを開く</button>
+        </div>
 
-        <label class="field">
-          <span>補足メモ（任意）</span>
-          <input
-            type="text"
-            id="note-input"
-            inputmode="text"
-            autocomplete="off"
-            autocapitalize="off"
-            autocorrect="off"
-            spellcheck="false"
-            enterkeyhint="done"
-            placeholder="必要ならメモ"
-          >
-        </label>
+        <div class="entry-row">
+          <label class="field quick-field">
+            <span>入力欄</span>
+            <input
+              type="text"
+              id="quick-input"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              placeholder="例: 小皿 500"
+            >
+          </label>
 
-        <button type="submit" class="primary-button">追加する</button>
-        <p class="helper-text">末尾の数字を金額として読み取ります。</p>
+          <button type="submit" class="primary-button entry-submit">追加</button>
+        </div>
+
+        <div class="note-field-wrapper" id="note-field-wrapper" hidden>
+          <label class="field">
+            <span>補足メモ（任意）</span>
+            <input
+              type="text"
+              id="note-input"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              placeholder="必要ならメモ"
+            >
+          </label>
+        </div>
+
         <p class="error-text" id="entry-error" role="alert"></p>
       </form>
 
